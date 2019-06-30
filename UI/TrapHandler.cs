@@ -33,17 +33,12 @@ public class TrapHandler : MonoBehaviour {
 
 	public void buildNewTrap(){
 		TrapDataHolder trap = EventSystem.current.currentSelectedGameObject.transform.parent.gameObject.GetComponent<TrapDataHolder>();
-		if(costMet(trap)){
-			if(GameInformation.main.builtTraps.Count < 4){
+		if(buildable(trap)){
 				Trap foundTrap = GameInformation.main.availableTraps.Find(delegate (Trap trp) {return trp.trapName == trap.trapName;});
 				GameInformation.main.builtTraps.Add(foundTrap);
 				DisplayGameInformation.main.updateAllDisplays();
+				LogDisplay.main.parseBuildTrapLog(trap.trapName);
 				NotificationHandler.main.newNotification("Successfuly built " + trap.trapName + "!");
-			} else {
-				NotificationHandler.main.newNotification("There's no more space to build a new trap.");
-			}
-		} else {
-			NotificationHandler.main.newNotification("Insufficient resources to build trap.");
 		}
 	}
 
@@ -56,7 +51,31 @@ public class TrapHandler : MonoBehaviour {
 	}
 
 
-	private bool costMet(TrapDataHolder data){
+	private bool buildable(TrapDataHolder data){
+		if(GameInformation.main.builtTraps.Count < 4){
+			if(data.costs.Count > 0)
+			{
+				foreach(ResourceCost cost in data.costs)
+				{
+					PlayerResources resToFind = GameInformation.main.playerResources.Find(x => x.name == cost.resource);
+					if(resToFind.currentValue < cost.amount) {
+						NotificationHandler.main.newNotification("Insufficient resources to build trap.");			
+						return false;
+					}
+					else 
+					{
+						resToFind.currentValue -= cost.amount;
+					}
+				}
+			}
+		}
+		else
+		{ 
+			NotificationHandler.main.newNotification("There's no more space to build a new trap.");		
+			return false; 
+		}
+
+		// returns true if it gets this far without a problem
 		return true;
 	}
 

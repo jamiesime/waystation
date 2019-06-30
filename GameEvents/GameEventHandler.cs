@@ -105,7 +105,7 @@ public class GameEventHandler : MonoBehaviour {
 			string prependMsg = "";
 			GameObject choiceBtn = Instantiate(choicePrefab, this.transform.position, this.transform.rotation, choicePanel.transform);
 			choiceBtn.GetComponent<ChoiceDataHolder>().choiceData = choice;
-			if(!requirementsMet(choice)) { choiceBtn.GetComponent<Button>().interactable = false; prependMsg = "[REQUIREMENT NOT MET] "; }
+			if(!requirementsMet(choiceBtn.transform, choice)) { choiceBtn.GetComponent<Button>().interactable = false; prependMsg = "[REQUIREMENT NOT MET] "; }
 			choiceBtn.transform.GetChild(0).GetComponent<Text>().text = prependMsg + choice.displayText;
 
 		}
@@ -119,12 +119,15 @@ public class GameEventHandler : MonoBehaviour {
 		choicePanel.SetActive(false);
 	}
 
-	public bool requirementsMet(EventChoice choice){
+	public bool requirementsMet(Transform choiceParent, EventChoice choice){
+		Transform reqPanel = choiceParent.transform.Find("RequirementPanel").transform;
 		foreach(ResReq req in choice.resReqs){
+			DisplayRequirement.main.displayResourceRequirement(reqPanel, req.resource, req.minimum);
 			PlayerResources resource = GameInformation.main.playerResources.Find(delegate(PlayerResources res) { return res.name == req.resource;});
 			if(resource.currentValue < req.minimum) return false;
 		}
 		foreach(StatReq req in choice.statReqs){
+			DisplayRequirement.main.displayStatRequirement(reqPanel, req.stat, req.minimum);
 			PlayerStats stat = GameInformation.main.playerStats.Find(delegate(PlayerStats st) { return st.name == req.stat;});
 			if(stat.currentValue < req.minimum) return false;
 		}

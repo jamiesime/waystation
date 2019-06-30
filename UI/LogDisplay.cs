@@ -38,6 +38,10 @@ public class LogDisplay : MonoBehaviour {
 		newLog.GetComponent<Text>().text = logText;
 	}
 
+	public void parseBuildTrapLog(string trapName){
+		addLog(trapName + " built");
+	}
+
 	public void parseChoiceLog(EventChoice choice){
 		foreach(ResChange change in choice.resChanges){
 			if(change.changeValue != 0){

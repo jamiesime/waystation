@@ -12,7 +12,11 @@ public class BuildTrapTooltip : Tooltip {
 	void Start () {
 		descriptText = transform.Find("DescripText").gameObject;
 		if(belongsTo.GetComponent<TrapDataHolder>()){
-			descriptText.GetComponent<Text>().text = belongsTo.GetComponent<TrapDataHolder>().trapDescrip;
+			TrapDataHolder trap = belongsTo.GetComponent<TrapDataHolder>();
+			descriptText.GetComponent<Text>().text = trap.trapDescrip;
+			foreach(ResourceCost cost in trap.costs){
+				DisplayRequirement.main.displayResourceRequirement(transform.Find("RequirementPanel").transform, cost.resource, cost.amount);
+			}
 		}
 	}
 	

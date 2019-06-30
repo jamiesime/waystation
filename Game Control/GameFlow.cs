@@ -54,6 +54,10 @@ public class GameFlow : MonoBehaviour {
 		displayEvents();
 	}
 
+	public void enterBattlePhase(){
+		
+	}
+
 	public GamePhase calcGamePhase(){
 		if(GameInformation.main.currentDay < GameInformation.main.finalDay / 3){
 			return GamePhase.Early;

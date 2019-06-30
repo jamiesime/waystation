@@ -11,7 +11,7 @@ public class DisplayTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 	private GameObject tipInstance;
 
 	public void OnPointerEnter(PointerEventData eventData){
-		tipInstance =  Instantiate(toolTipPrefab, Input.mousePosition + (Vector3.down * 100), this.transform.rotation, GameObject.Find("MainUI").transform);
+		tipInstance =  Instantiate(toolTipPrefab, Input.mousePosition + (Vector3.down * 20) + (Vector3.right * 50), this.transform.rotation, GameObject.Find("MainUI").transform);
 		tipInstance.GetComponent<Tooltip>().belongsTo = eventData.pointerEnter;
 	}
 
