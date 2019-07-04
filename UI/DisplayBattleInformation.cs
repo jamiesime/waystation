@@ -10,7 +10,7 @@ public class DisplayBattleInformation : MonoBehaviour {
 	public Battle currentBattle;
 	public GameObject enemyInfoPanel, battleLogPanel, activeTrapsPanel;
 	private GameObject enemyName, enemyHealth;
-	public GameObject logEntryPrefab;
+	public GameObject logEntryPrefab, activeTrapPrefab, enemyHealthPrefab;
 	public int logMax;
 
 	// Use this for initialization
@@ -24,6 +24,7 @@ public class DisplayBattleInformation : MonoBehaviour {
 
 	void Start(){
 		enemyName = enemyInfoPanel.transform.Find("EnemyName").gameObject;
+		enemyHealth = enemyInfoPanel.transform.Find("EnemyHealthDisplay").gameObject;
 	}
 
 	
@@ -34,12 +35,12 @@ public class DisplayBattleInformation : MonoBehaviour {
 
 	public void addBattleLog(string logText){
 		GameObject newLog;
-		if(this.transform.childCount < logMax){
-			newLog = Instantiate(logEntryPrefab, this.transform.position, this.transform.rotation, this.transform);
+		if(battleLogPanel.transform.childCount < logMax){
+			newLog = Instantiate(logEntryPrefab, this.transform.position, this.transform.rotation, battleLogPanel.transform);
 			newLog.transform.SetAsFirstSibling();
 		} else {
-			Destroy(this.transform.GetChild(this.transform.childCount - 1).gameObject);
-			newLog = Instantiate(logEntryPrefab, this.transform.position, this.transform.rotation, this.transform);
+			Destroy(battleLogPanel.transform.GetChild(battleLogPanel.transform.childCount - 1).gameObject);
+			newLog = Instantiate(logEntryPrefab, this.transform.position, this.transform.rotation, battleLogPanel.transform);
 			newLog.transform.SetAsFirstSibling();
 		}
 		newLog.GetComponent<Text>().text = logText;
@@ -47,10 +48,22 @@ public class DisplayBattleInformation : MonoBehaviour {
 
 	public void updateEnemyInfoDisplay(){
 		enemyName.GetComponent<Text>().text = currentBattle.enemyName;
+		foreach(Transform child in enemyHealth.transform) Destroy(child.gameObject);
+		for(int i = 0; i < BattleHandler.main.enemyHealth; i++){
+			Instantiate(enemyHealthPrefab, this.transform.position, this.transform.rotation, enemyHealth.transform);
+		}
 	}
 
 	public void updateActiveTrapsDisplay(){
-
+		foreach(Transform child in activeTrapsPanel.transform) Destroy(child.gameObject);
+		foreach(Trap trap in GameInformation.main.builtTraps){
+			GameObject setTrap = Instantiate(activeTrapPrefab, this.transform.position, this.transform.rotation, activeTrapsPanel.transform);
+			TrapDataHolder data = setTrap.GetComponent<TrapDataHolder>();
+			data.trapName = trap.trapName;
+			data.reuseable = trap.reuseable;
+			setTrap.GetComponent<Image>().sprite = trap.icon;
+			setTrap.transform.GetChild(0).GetComponent<Text>().text = trap.trapName;
+		}
 	}
 
 }

@@ -13,6 +13,7 @@ public class GameInformation : MonoBehaviour
 	public List<GameEvent> queuedEvents;
     public List<GameEvent> todaysEvents;
     public List<GameEvent> randomEvents;
+    public List<Battle> battles;
 
     public int currentDay;
     public int finalDay;
@@ -32,6 +33,8 @@ public class GameInformation : MonoBehaviour
         } else {
             Destroy(this.gameObject);
         }
+
+        battles.AddRange(Resources.LoadAll<Battle>("Prefabs/Battles"));
 
         GameEvent[] tmpRnd = Resources.LoadAll<GameEvent>("Prefabs/Events");
         foreach(GameEvent thing in tmpRnd){

@@ -21,15 +21,17 @@ public class SFXManager : MonoBehaviour {
 	}
 	
 	public void playSoundOnce(AudioClip clip, int track = 1, float vol = 1){
-		switch (track){
-			case 1:
-				sfx1.volume = vol;
-				sfx1.PlayOneShot(clip);
-			break;
-			case 2: 
-				sfx2.volume = vol;
-				sfx2.PlayOneShot(clip);
-			break;
+		if(clip){
+			switch (track){
+				case 1:
+					sfx1.volume = vol;
+					sfx1.PlayOneShot(clip);
+				break;
+				case 2: 
+					sfx2.volume = vol;
+					sfx2.PlayOneShot(clip);
+				break;
+			}
 		}
 	}
 

@@ -17,6 +17,7 @@ public class GameFlow : MonoBehaviour {
 	}
 
 	public void advanceDay(int amount){
+		Debug.Log("advancing day to " + (GameInformation.main.currentDay + amount));
 		GameInformation.main.currentLocation = (GameLocation) Resources.Load("Prefabs/GameLocations/Waystation");
 		GameInformation.main.currentDay += amount;
 		GameObject changeDayPanel = (GameObject) Resources.Load("Prefabs/Main UI/Panels/AdvanceDayPanel");
@@ -25,7 +26,18 @@ public class GameFlow : MonoBehaviour {
 		GameInformation.main.todaysEvents.Clear();
 		GameInformation.main.restoreEnergy();
 		DisplayGameInformation.main.updateAllDisplays();
-		if(GameInformation.main.queuedEvents.Count > 0){
+	
+		if(!isBattleDay()){
+			getDayEvents();
+			displayEvents();
+		} else {
+			enterBattlePhase();
+		}
+
+	}
+
+	public void getDayEvents(){
+			if(GameInformation.main.queuedEvents.Count > 0){
 			for (int i = 0; i < GameInformation.main.queuedEvents.Count; i++){
 				GameEvent curEvn = GameInformation.main.queuedEvents[i];
 				if(GameEventHandler.main.eventIsToday(curEvn)){
@@ -42,7 +54,8 @@ public class GameFlow : MonoBehaviour {
 			foreach(GameEvent evn in GameInformation.main.randomEvents){
 				if(GameEventHandler.main.isRandomEventValid(evn)){
 					int result = randomNumber.Next(0, 100);
-					if(result <= evn.chance) GameInformation.main.todaysEvents.Add(evn);
+					// check chance and also if there are less than 2 events today otherwise, don't add
+					if(result <= evn.chance && GameInformation.main.todaysEvents.Count < 2) GameInformation.main.todaysEvents.Add(evn);
 				}
 			}
 
@@ -51,11 +64,18 @@ public class GameFlow : MonoBehaviour {
 			}
 		}
 			
-		displayEvents();
 	}
 
+	public bool isBattleDay(){
+		foreach(Battle btl in GameInformation.main.battles){
+			if(btl.onDay == GameInformation.main.currentDay) return true;
+		}
+		return false;
+	}
+	
 	public void enterBattlePhase(){
-		
+		Battle battle = GameInformation.main.battles.Find(x => x.onDay == GameInformation.main.currentDay);
+		BattleHandler.main.startNewBattle(battle);
 	}
 
 	public GamePhase calcGamePhase(){

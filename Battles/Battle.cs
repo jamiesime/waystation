@@ -6,6 +6,7 @@ using UnityEngine.UI;
 [CreateAssetMenu]
 public class Battle : ScriptableObject {
 
+	public int onDay;
 	public string enemyName;
 	public int enemyHealth;
 	public int enemyBaseAtk;
@@ -16,5 +17,7 @@ public class Battle : ScriptableObject {
 	public Image battleBG;
 	public List<string> flavourDialogue;
 
+	[TextArea(2, 8)]
+	public string introText;	
 	
 }

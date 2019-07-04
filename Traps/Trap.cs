@@ -11,4 +11,5 @@ public class Trap : ScriptableObject {
 	public string trapDescrip;
 	public List<ResourceCost> costs;
 	public bool reuseable;
+	public AudioClip useSound;
 }
