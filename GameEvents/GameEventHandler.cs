@@ -177,6 +177,9 @@ public class GameEventHandler : MonoBehaviour {
 		if(choice.removeFromLocations != null){
 			GameInformation.main.availableLocations.Remove(choice.removeFromLocations);
 		}
+		if(choice.addToTraps != null){
+			GameInformation.main.availableTraps.Add(choice.addToTraps);
+		}
 
 
 		DisplayGameInformation.main.updateAllDisplays();

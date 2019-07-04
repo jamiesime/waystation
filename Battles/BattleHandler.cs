@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 public class BattleHandler : MonoBehaviour {
 
+	private System.Random randomNumber = new System.Random();
 	public static BattleHandler main;
 	public Battle currentBattle;
 	public int enemyHealth;
+	public List<StatusEffect> enemyAfflications;
 
 	public GameObject battleUI, beginPanel, actionPanel, enemyPositionPanel, enemyObj;
 	public AudioClip battleStart, enemyMove;
@@ -74,8 +76,47 @@ public class BattleHandler : MonoBehaviour {
 
 	public void applyTrapEffect(int index){
 		if(GameInformation.main.builtTraps.Count - 1 >= index){
+			bool multiDmg = false;
 			Trap trap = GameInformation.main.builtTraps[index];
-			DisplayBattleInformation.main.addBattleLog(currentBattle.enemyName + " activated " + trap.trapName + "!");
+			DisplayBattleInformation.main.addBattleLog(currentBattle.enemyName + " encountered " + trap.trapName + "!");
+			float baseDmg = trap.baseDamage;
+
+			foreach(StatusEffect effect in enemyAfflications){
+				if(enemyAfflications.Contains(trap.effectThatMultplies)){
+					baseDmg = baseDmg * trap.multiplier;
+					multiDmg = true;
+				}
+			}
+
+			int hitResult = randomNumber.Next(0, 100);
+			if(baseDmg > 0f){
+				if(hitResult <= trap.chanceToHit)
+				{
+					enemyHealth -= (int)Mathf.Round(baseDmg);
+					if(multiDmg)
+					{
+						DisplayBattleInformation.main.addBattleLog("Extra damage!");
+					}
+
+					DisplayBattleInformation.main.addBattleLog(currentBattle.enemyName + " took " + (int)Mathf.Round(baseDmg) + " damage from " + trap.trapName);
+
+					if(trap.applyEffect != StatusEffect.None)
+					{
+						int effectResult = randomNumber.Next(0, 100);
+						if(effectResult <= trap.applyChance && !enemyAfflications.Contains(trap.applyEffect)) {
+							enemyAfflications.Add(trap.applyEffect);
+							DisplayBattleInformation.main.addBattleLog(trap.trapName + " inflicted " + trap.applyEffect + " on " + currentBattle.enemyName);
+						}
+					}
+
+				} 
+				else
+				{
+					DisplayBattleInformation.main.addBattleLog(currentBattle.enemyName + " evaded " + trap.trapName);
+				}
+			}
+
+
 			SFXManager.main.playSoundOnce(trap.useSound);
 		}
 	}

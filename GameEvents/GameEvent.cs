@@ -52,6 +52,7 @@ public struct EventChoice {
 
 	public GameLocation addToLocations;
 	public GameLocation removeFromLocations;
+	public Trap addToTraps;
 }
 
 [Serializable]

@@ -38,8 +38,13 @@ public class DisplayBattleInformation : MonoBehaviour {
 		if(battleLogPanel.transform.childCount < logMax){
 			newLog = Instantiate(logEntryPrefab, this.transform.position, this.transform.rotation, battleLogPanel.transform);
 			newLog.transform.SetAsFirstSibling();
-		} else {
-			Destroy(battleLogPanel.transform.GetChild(battleLogPanel.transform.childCount - 1).gameObject);
+		} 
+		else
+		{
+			Debug.Log("should only be 4 logs");
+			foreach(Transform child in battleLogPanel.transform){
+				if(child.GetSiblingIndex() > logMax) Destroy(child.gameObject);
+			}
 			newLog = Instantiate(logEntryPrefab, this.transform.position, this.transform.rotation, battleLogPanel.transform);
 			newLog.transform.SetAsFirstSibling();
 		}
